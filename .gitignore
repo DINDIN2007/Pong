@@ -1,0 +1,21 @@
+# Ignore Quartus generated files and directories
+output_files/
+db/
+incremental_db/
+qdb/
+.qsys_edit/
+*.bak
+*.rpt
+*.srf
+*.sta.rpt
+*.dpf
+*.sof
+*.pof
+*.saoi
+*.ptf
+*.tdf
+*.cdf
+*.tcl.bak
+*.pin
+*.html
+*.done
