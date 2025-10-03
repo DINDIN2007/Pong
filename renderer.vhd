@@ -28,6 +28,18 @@ end renderer;
 
 architecture procedural of renderer is
 	-- drawing component definitions, to be used in part 6
+	component rectangle is
+		port(
+			hcount: INTEGER;
+			vcount: INTEGER;
+			x1: INTEGER;
+			x2: INTEGER;
+			y1: INTEGER;
+			y2: INTEGER;
+			lit: out STD_LOGIC
+		);
+		end component;
+	
 	component rect_display is
 		port (
 			hcount: 	in INTEGER;		-- horizontal position of current pixel
@@ -38,7 +50,7 @@ architecture procedural of renderer is
 			y2: 		in INTEGER;		-- bottom edge position
 			lit: 		out STD_LOGIC	-- whether pixel is inside specified rectangle
 		);
-	end component;
+		end component;
 
 	component numeric_display is
 		port (
@@ -48,7 +60,7 @@ architecture procedural of renderer is
 			hcount, vcount: in INTEGER; 	-- current pixel position
 			lit: out STD_LOGIC				-- whether the current pixel should be lit by the displayed number
 		);
-	end component;
+		end component;
 
 	-- constants for drawing the game -- used in Part 6
 	constant PADDLE_H: 	NATURAL := 100;	-- width of the paddles, in px
@@ -63,10 +75,13 @@ architecture procedural of renderer is
 	
 	-- signals to track what game object occupies the current pixel
 	signal on_scorel, on_scorer, on_pl, on_pr, on_ball: STD_LOGIC;
+	signal on_square: STD_LOGIC;
+	
+	
 begin
 	-- components to draw game, to be uncommented in part 6
---	-- component to render left score
---	score_l_render: numeric_display
+--	-- component to r	er left score
+--	score_l_r	er: numeric_display
 --		port map (
 --			pos_x => H_ACTIVE/2 - 16,
 --			pos_y => 16,
@@ -76,8 +91,8 @@ begin
 --			lit => on_scorel
 --		);
 --	
---	-- component to render right score
---	score_r_render: numeric_display
+--	-- component to r	er right score
+--	score_r_r	er: numeric_display
 --		port map (
 --			pos_x => H_ACTIVE/2 + 16,
 --			pos_y => 16,
@@ -118,6 +133,17 @@ begin
 --		lit => on_ball
 --	);
 
+	rectangle_inst: rectangle
+			port map(
+				hcount => hcount,
+				vcount => vcount,
+				x1 => 40,
+				x2 => 500,
+				y1 => 40,
+				y2 => 200,
+				lit => on_square
+			);
+
 	-- indexable versions of hcount and vcount, to make test patterns easier
 	hcount_vec <= std_logic_vector(to_unsigned(hcount, 32));
 	vcount_vec <= std_logic_vector(to_unsigned(vcount, 32));
@@ -129,10 +155,13 @@ begin
 		if de = '0' then
 			-- do not output color when we're outside visible area
 			rgb <= x"000000";
-		else
+		elsif on_square = '1' then
 			-- logic for test pattern/choosing a color goes here
 			rgb <= x"FFFFFF";
+		else
+			rgb <= x"000000";
 		end if;
 		
 	end process;
+	
 end procedural;

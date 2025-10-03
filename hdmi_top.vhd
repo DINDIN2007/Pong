@@ -39,12 +39,40 @@ component pll_74mhz is
 	);
 end component;
 
-variable hcount : INTEGER;
-variable vcount : INTEGER;
-variable hsync : STD_LOGIC;
-variable vsync : STD_LOGIC;
-variable de : STD_LOGIC;
-variable frame_start : STD_LOGIC;
+component i2c_config is 
+	port (
+		clk:		in STD_LOGIC;		-- 74.25 mhz pixel clock
+		reset: 	in STD_LOGIC;		-- active-high reset
+		scl:		out STD_LOGIC;		-- i2c clock line (push-pull, but board has pull-ups)
+		sda:		inout STD_LOGIC	-- i2c data line (open-drain style)
+	);
+end component;
+
+component renderer is
+	port (
+		hcount:	in INTEGER;						-- current horizontal position on the screen
+		vcount:	in INTEGER;						-- current vertical position on the screen
+		de: 		in STD_LOGIC;
+		
+		rgb: out STD_LOGIC_VECTOR(23 downto 0)	-- the color of the current pixel
+	);
+end component;
+
+-- Signal declarations for internal connections and component outputs
+signal clk_pixel : STD_LOGIC;
+signal pll_locked : STD_LOGIC;
+signal reset : STD_LOGIC; -- Used for PLL reset
+	
+-- Signals to connect to the video_timing component
+signal hcount : INTEGER;
+signal vcount : INTEGER;
+signal hsync : STD_LOGIC;
+signal vsync : STD_LOGIC;
+signal de : STD_LOGIC;
+signal frame_start : STD_LOGIC;
+
+-- Signals for renderer
+signal rgb : STD_LOGIC_VECTOR(23 downto 0);
 
 begin
 
@@ -68,9 +96,27 @@ begin
 			frame_start => frame_start
 		);
 	
+	i2c_module : i2c_config
+		port map (
+			clk => clk_pixel,
+			reset => not pll_locked,
+			scl => i2c_scl,
+			sda => i2c_sda
+		);
+	
+	renderer_inst : renderer
+        port map (
+            hcount => hcount,
+            vcount => vcount,
+            de     => de,
+            rgb    => rgb
+        );
+	
 	hdmi_tx_de <= de;
 	hdmi_tx_hs <= hsync;
 	hdmi_tx_vs <= vsync;
 	hdmi_tx_clk <= clk_pixel;
+	
+	hdmi_tx_d <= rgb;
 	
 end structural;

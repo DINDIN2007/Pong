@@ -1,0 +1,5 @@
+# Set the default behavior to automatically handle line endings
+* text=auto
+
+# Force LF line endings for all text files in the repository
+* text eol=lf
