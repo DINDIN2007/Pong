@@ -98,6 +98,23 @@ architecture procedural of game_logic is
 				
 			elsif game_clk = '1' then
 			
+				-- update paddle position
+				if pl_up = '1' then
+					ply_n := ply_n - PADDLE_V;
+				elsif pl_dn = '1' then
+					ply_n := ply_n + PADDLE_V;
+				end if;
+				
+				ply_n := clamp(ply_n, 0, V_ACTIVE - PADDLE_H);
+					
+				if pr_up = '1' then
+					pry_n := pry_n - PADDLE_V;
+				elsif pr_dn = '1' then
+					pry_n := pry_n + PADDLE_V;
+				end if;
+				
+				pry_n := clamp(pry_n, 0, V_ACTIVE  - PADDLE_H);
+			
 				-- update ball position
 				bx_n := bx_n + vx;
 				by_n := by_n + vy;

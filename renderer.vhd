@@ -15,12 +15,12 @@ entity renderer is
 		de: 		in STD_LOGIC;					-- whether we're in the visible area of the screen
 		
 		-- game data, to be uncommented in part 6
---		pl_y: 	in INTEGER;						-- the left player's current y pos
---		pr_y: 	in INTEGER;						-- the right player's current y pos
---		ball_x: 	in INTEGER;						-- the ball's current x position
---		ball_y: 	in INTEGER;						-- the ball's current y position
---		score_l: in NATURAL;	-- the left player's score
---		score_r: in NATURAL;	-- the right player's score
+		pl_y: 	in INTEGER;						-- the left player's current y pos
+		pr_y: 	in INTEGER;						-- the right player's current y pos
+		ball_x: 	in INTEGER;						-- the ball's current x position
+		ball_y: 	in INTEGER;						-- the ball's current y position
+		score_l: in NATURAL;	-- the left player's score
+		score_r: in NATURAL;	-- the right player's score
 		
 		rgb: out STD_LOGIC_VECTOR(23 downto 0)	-- the color of the current pixel
 	);
@@ -80,69 +80,68 @@ architecture procedural of renderer is
 	
 begin
 	-- components to draw game, to be uncommented in part 6
---	-- component to r	er left score
---	score_l_r	er: numeric_display
---		port map (
---			pos_x => H_ACTIVE/2 - 16,
---			pos_y => 16,
---			hcount => hcount,
---			vcount => vcount,
---			num => to_unsigned(score_l, 4),
---			lit => on_scorel
---		);
---	
+	-- component to r	er left score
+	score_l_rer: numeric_display
+		port map (
+			pos_x => H_ACTIVE/2 - 16,
+			pos_y => 16,
+			hcount => hcount,
+			vcount => vcount,
+			num => to_unsigned(score_l, 4),
+			lit => on_scorel
+		);
+		
 --	-- component to r	er right score
---	score_r_r	er: numeric_display
---		port map (
---			pos_x => H_ACTIVE/2 + 16,
---			pos_y => 16,
---			hcount => hcount,
---			vcount => vcount,
---			num => to_unsigned(score_r, 4),
---			lit => on_scorer
---		);
+	score_r_rer: numeric_display
+		port map (
+			pos_x => H_ACTIVE/2 + 16,
+			pos_y => 16,
+			hcount => hcount,
+			vcount => vcount,
+			num => to_unsigned(score_r, 4),
+			lit => on_scorer
+		);
 
 
---	paddle_l: rect_display port map (
---		hcount => hcount,
---		vcount => vcount,
---		x1 => PL_X,
---		x2 => PL_X + PADDLE_W,
---		y1 => pl_y,
---		y2 => pl_y + PADDLE_H,
---		lit => on_pl
---	);
---	
---	paddle_r: rect_display port map (
---		hcount => hcount,
---		vcount => vcount,
---		x1 => PR_X,
---		x2 => PR_X + PADDLE_W,
---		y1 => pr_y,
---		y2 => pr_y + PADDLE_H,
---		lit => on_pr
---	);
---
---	ball: rect_display port map (
---		hcount => hcount,
---		vcount => vcount,
---		x1 => ball_x - BALL_R,
---		x2 => ball_x + BALL_R,
---		y1 => ball_y - BALL_R,
---		y2 => ball_y + BALL_R,
---		lit => on_ball
---	);
+	paddle_l: rect_display port map (
+		hcount => hcount,
+		vcount => vcount,
+		x1 => PL_X,
+		x2 => PL_X + PADDLE_W,
+		y1 => pl_y,
+		y2 => pl_y + PADDLE_H,
+		lit => on_pl
+	);
+	
+	paddle_r: rect_display port map (
+		hcount => hcount,
+		vcount => vcount,
+		x1 => PR_X,
+		x2 => PR_X + PADDLE_W,
+		y1 => pr_y,
+		y2 => pr_y + PADDLE_H,
+		lit => on_pr
+	);
 
-	rectangle_inst: rectangle
-			port map(
-				hcount => hcount,
-				vcount => vcount,
-				x1 => 40,
-				x2 => 500,
-				y1 => 40,
-				y2 => 200,
-				lit => on_square
-			);
+	ball: rect_display port map (
+		hcount => hcount,
+		vcount => vcount,
+		x1 => ball_x - BALL_R,
+		x2 => ball_x + BALL_R,
+		y1 => ball_y - BALL_R,
+		y2 => ball_y + BALL_R,
+		lit => on_ball
+	);
+
+	--rectangle_inst: rect_display port map(
+	--		hcount => hcount,
+	--		vcount => vcount,
+	--		x1 => 40,
+	--		x2 => 500,
+	--		y1 => 40,
+	--		y2 => 200,
+	--		lit => on_square
+	--);
 
 	-- indexable versions of hcount and vcount, to make test patterns easier
 	hcount_vec <= std_logic_vector(to_unsigned(hcount, 32));
@@ -155,7 +154,19 @@ begin
 		if de = '0' then
 			-- do not output color when we're outside visible area
 			rgb <= x"000000";
-		elsif on_square = '1' then
+		elsif on_scorel = '1' then
+			-- logic for test pattern/choosing a color goes here
+			rgb <= x"FFFFFF";
+		elsif on_scorer = '1' then
+			-- logic for test pattern/choosing a color goes here
+			rgb <= x"FFFFFF";
+		elsif on_pl = '1' then
+			-- logic for test pattern/choosing a color goes here
+			rgb <= x"FFFFFF";
+		elsif on_pr = '1' then
+			-- logic for test pattern/choosing a color goes here
+			rgb <= x"FFFFFF";
+		elsif on_ball = '1' then
 			-- logic for test pattern/choosing a color goes here
 			rgb <= x"FFFFFF";
 		else
